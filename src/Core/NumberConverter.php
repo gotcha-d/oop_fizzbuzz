@@ -6,6 +6,6 @@ class NumberConverter
 {
     public function convert(int $n)
     {
-
+        return 1;
     }
 }
