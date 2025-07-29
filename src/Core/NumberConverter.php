@@ -6,6 +6,10 @@ class NumberConverter
 {
     public function convert(int $n)
     {
-        return (string) $n;
+        if ($n % 3 == 0) {
+            return "Fizz";
+        } else {
+            return (string) $n;
+        }
     }
 }
