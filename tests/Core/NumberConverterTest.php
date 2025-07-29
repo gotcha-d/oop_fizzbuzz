@@ -9,6 +9,7 @@ class NumberConverterTest extends TestCase
     public function testConvert()
     {
         $fizzBuzz = new NumberConverter();
-        $this->assertEquals(1, $fizzBuzz->convert(1));
+        $this->assertEquals("1", $fizzBuzz->convert(1));
+        $this->assertEquals("2", $fizzBuzz->convert(2));
     }
 }
