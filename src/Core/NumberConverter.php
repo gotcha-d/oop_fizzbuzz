@@ -14,10 +14,10 @@ class NumberConverter
 
     public function convert(int $n)
     {
-        if (!empty($this->rules)) {
-            return $this->rules[0]->replace($n);
-        } else {
-            return "";
+        $result = '';
+        foreach ($this->rules as $rule) {
+            $result .= $rule->replace($n);
         }
+        return $result;
     }
 }
