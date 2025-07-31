@@ -14,13 +14,15 @@ class NumberConverterTest extends TestCase
 
     public function testConvertWithSingleRule()
     {
-        $rule = $this->createMock(ReplaceRuleInterface::class);
-        $rule->expects($this->atLeastOnce())
-            ->method("replace")
-            ->with(1)
-            ->willReturn("Replaced");
+        $fizzBuzz = new NumberConverter([
+            $this->createMockRule(
+                expectedNumber: 1,
+                expectedCarry: "",
+                matchResult: true,
+                replacement: "Replaced"
+            )
+        ]);
 
-        $fizzBuzz = new NumberConverter([$rule]);
         $this->assertEquals("Replaced", $fizzBuzz->convert(1));
     }
 
@@ -29,11 +31,15 @@ class NumberConverterTest extends TestCase
         $fizzBuzz = new NumberConverter([
             $this->createMockRule(
                 expectedNumber: 1,
+                expectedCarry: "",
+                matchResult: true,
                 replacement: "Fizz"
             ),
             $this->createMockRule(
                 expectedNumber: 1,
-                replacement: "Buzz"
+                expectedCarry: "Fizz",
+                matchResult: true,
+                replacement: "FizzBuzz"
             ),
         ]);
         $this->assertEquals("FizzBuzz", $fizzBuzz->convert(1));
@@ -44,27 +50,44 @@ class NumberConverterTest extends TestCase
         $fizzBuzz = new NumberConverter([
             $this->createMockRule(
                 expectedNumber: 1,
-                replacement: ""
+                expectedCarry: "",
+                matchResult: false,
+                replacement: "Fizz"
             ),
             $this->createMockRule(
                 expectedNumber: 1,
-                replacement: ""
+                expectedCarry: "",
+                matchResult: false,
+                replacement: "Buzz"
             ),
             $this->createMockRule(
                 expectedNumber: 1,
+                expectedCarry: "",
+                matchResult: true,
                 replacement: "1"
             ),
         ]);
         $this->assertEquals("1", $fizzBuzz->convert(1));
     }
 
-    private function createMockRule(int $expectedNumber, string $replacement)
-    {
+    private function createMockRule(
+        int $expectedNumber,
+        string $expectedCarry,
+        bool $matchResult,
+        string $replacement
+    ) {
         $rule = $this->createMock(ReplaceRuleInterface::class);
-        $rule->expects($this->atLeastOnce())
-            ->method("replace")
-            ->with($expectedNumber)
+        // applyは必ずしも適用されるとは限らないのでany
+        $rule->expects($this->any())
+            ->method("apply")
+            ->with($expectedCarry, $expectedNumber)
             ->willReturn($replacement);
+        // matchは必ず一度は評価されるのでatLeastOnce
+        $rule->expects($this->atLeastOnce())
+            ->method("match")
+            ->with($expectedCarry, $expectedNumber)
+            ->willReturn($matchResult);
+
         return $rule;
     }
 }

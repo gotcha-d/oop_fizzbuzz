@@ -3,10 +3,11 @@
 namespace FizzBuzz\Core;
 
 /**
- * 「FizzBuzzはなんらかの法則で整数を文字列に置換するルールがある」
+ * 入力された整数を使って現在値を置換する
  * という抽象で全体を捉えたインターフェース
  */
 interface ReplaceRuleInterface
 {
-    public function replace(int $n): string;
+    public function apply(string $carry, int $n): string;
+    public function match(string $carry, int $n): bool;
 }
