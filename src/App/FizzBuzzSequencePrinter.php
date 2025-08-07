@@ -3,22 +3,25 @@
 namespace FizzBuzz\App;
 
 use FizzBuzz\Core\NumberConverter;
-use FizzBuzz\Spec\CyclicNumberRule;
-use FizzBuzz\Spec\PassThroughRule;
 
 class FizzBuzzSequencePrinter
 {
+    /**
+     * コンストラクタ
+     *
+     * @param NumberConverter $converter
+     * @param OutputInterface $output
+     */
+    public function __construct(
+        protected NumberConverter $converter,
+        protected OutputInterface $output){}
+
     public function printRange(int $begin, int $end): void
     {
-        // 自力でNumberConverterオブジェクトを生成している
-        // 別のパッケージに強い依存が生まれていて、FizzBuzzSequencePrinter の単体テストのために具象レベルの依存が強いられる
-        $fizzBuzz = new NumberConverter([
-            new CyclicNumberRule(3, "Fizz"),
-            new CyclicNumberRule(5, "Buzz"),
-            new PassThroughRule(),
-        ]);
         for ($i = $begin; $i <= $end; $i++){
-            printf("%d %s\n", $i, $fizzBuzz->convert($i));
+            $text = $this->converter->convert($i);
+            $outputText = sprintf("%d %s\n", $i, $text);
+            $this->output->write($outputText);
         }
     }
 }
